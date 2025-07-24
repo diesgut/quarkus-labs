@@ -4,16 +4,25 @@ import com.diesgut.domain.project.ProjectEntity;
 import com.diesgut.domain.task.TaskEntity;
 import com.diesgut.domain.user.UserService;
 import com.diesgut.domain.user.UserEntity;
+import com.diesgut.domain.user.dto.UserDto;
+import com.diesgut.domain.user.mapper.UserEntityMapper;
 import io.quarkus.elytron.security.common.BcryptUtil;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.ObjectNotFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 @ApplicationScoped
 public class UserServiceImp implements UserService {
+    private final UserEntityMapper userEntityMapper;
+
     public Uni<UserEntity> findById(Long id) {
         return UserEntity.<UserEntity>findById(id)
                 .onItem()
@@ -25,8 +34,14 @@ public class UserServiceImp implements UserService {
         return UserEntity.find("name", name).firstResult(); //if the user is not found, it will return null
     }
 
-    public Uni<List<UserEntity>> list() {
-        return UserEntity.listAll(); // If there are no users, it will return an empty list
+    @WithSession
+    public Uni<List<UserDto>> list() {
+        return UserEntity.listAll() // If there are no users, it will return an empty list
+                .onItem().transform(entityList ->
+                        entityList.stream()
+                                .map(userEntity -> userEntityMapper.toDto((UserEntity) userEntity))
+                                .toList()
+                );
     }
 
     @WithTransaction // This annotation ensures that the method runs within a reactive transaction

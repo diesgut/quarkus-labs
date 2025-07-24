@@ -30,15 +30,15 @@ public class TaskEntity extends PanacheBaseEntity {
     @Column(length = 1000)
     private String description;
 
-    public Integer priority;
+    private Integer priority;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
-    private ZonedDateTime complete;
+    private ZonedDateTime complete_at;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    public ProjectEntity projectEntity;
+    private ProjectEntity projectEntity;
 }

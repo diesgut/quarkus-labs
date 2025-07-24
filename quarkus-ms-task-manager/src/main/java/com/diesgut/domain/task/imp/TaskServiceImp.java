@@ -60,7 +60,7 @@ public class TaskServiceImp {
     public Uni<Boolean> setComplete(Long id, boolean complete) {
         return findById(id)
                 .chain(task -> {
-                    task.setComplete(complete ? ZonedDateTime.now() : null);
+                    task.setComplete_at(complete ? ZonedDateTime.now() : null);
                     return task.persistAndFlush();
                 })
                 .chain(task -> Uni.createFrom().item(complete));
