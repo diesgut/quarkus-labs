@@ -94,8 +94,8 @@ public class UserServiceImp implements UserService {
     public Uni<Void> delete(Long id) {
         return findEntityById(id)
                 .chain(user -> Uni.combine().all().unis(
-                                        TaskEntity.delete("userEntity.id", user.getId()),
-                                        ProjectEntity.delete("userEntity.id", user.getId())
+                                        TaskEntity.delete("userEntity.id", user.id),
+                                        ProjectEntity.delete("userEntity.id", user.id)
                                 ).asTuple()
                                 .chain(t -> user.delete())
                 );
@@ -130,4 +130,8 @@ public class UserServiceImp implements UserService {
     public static List<UserEntity> findByPerson(PersonEntity person) {
         return list("person", person);
     }**/
+
+    public static boolean matches(UserEntity user, String password) {
+        return BcryptUtil.matches(password, user.password);
+    }
 }

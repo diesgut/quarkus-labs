@@ -23,7 +23,7 @@ public class TaskServiceImp {
                 .chain(user -> TaskEntity.<TaskEntity>findById(id)
                         .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "Task"))
                         .onItem().invoke(task -> {
-                            if (!user.equals(task.getUserEntity())) {
+                            if (!user.equals(task.userEntity)) {
                                 throw new UnauthorizedException("You are not allowed to update this task");
                             }
                         }));
@@ -38,14 +38,14 @@ public class TaskServiceImp {
     public Uni<TaskEntity> create(TaskEntity task) {
         return userService.getCurrentUser()
                 .chain(user -> {
-                    task.setUserEntity(user);
+                    task.userEntity = user;
                     return task.persistAndFlush();
                 });
     }
 
     @WithTransaction
     public Uni<TaskEntity> update(TaskEntity task) {
-        return findById(task.getId())
+        return findById(task.id)
                 .chain(t -> TaskEntity.getSession())
                 .chain(s -> s.merge(task));
     }
@@ -60,7 +60,7 @@ public class TaskServiceImp {
     public Uni<Boolean> setComplete(Long id, boolean complete) {
         return findById(id)
                 .chain(task -> {
-                    task.setComplete_at(complete ? ZonedDateTime.now() : null);
+                    task.complete_at = complete ? ZonedDateTime.now() : null;
                     return task.persistAndFlush();
                 })
                 .chain(task -> Uni.createFrom().item(complete));

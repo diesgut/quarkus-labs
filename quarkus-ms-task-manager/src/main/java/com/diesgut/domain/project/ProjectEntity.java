@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(

@@ -12,8 +12,6 @@ import lombok.Setter;
 import java.time.ZonedDateTime;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(
@@ -25,20 +23,20 @@ import java.time.ZonedDateTime;
 )
 public class TaskEntity extends PanacheBaseEntity {
     @Column(nullable = false)
-    private String title;
+    public String title;
 
     @Column(length = 1000)
-    private String description;
+    public String description;
 
-    private Integer priority;
+    public Integer priority;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
-    private UserEntity userEntity;
+    public UserEntity userEntity;
 
-    private ZonedDateTime complete_at;
+    public ZonedDateTime complete_at;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
-    private ProjectEntity projectEntity;
+    public ProjectEntity projectEntity;
 }

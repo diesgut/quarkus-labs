@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(
@@ -20,15 +18,15 @@ import lombok.Setter;
 )
 public class PersonEntity extends PanacheBaseEntity {
     @Column(unique = true, nullable = false)
-    private String first_name;
+    public String first_name;
 
     @Column(unique = true, nullable = false)
-    private String last_name;
+    public String last_name;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private PersonConstants.DocumentType document_type;
+    public PersonConstants.DocumentType document_type;
 
     @Column(unique = true, nullable = false)
-    private String document_number;
+    public String document_number;
 }

@@ -10,8 +10,6 @@ import lombok.Setter;
 import java.util.List;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
-@Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(
@@ -23,14 +21,14 @@ import java.util.List;
 public class UserEntity extends PanacheBaseEntity {
 
     @Column(unique = true, nullable = false)
-    private String name;
+    public String name;
 
     @Column(nullable = false)
-    private String password;
+    public String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "id"))
     @Column(name = "role")
-    private List<String> roles;
+    public List<String> roles;
 
 }

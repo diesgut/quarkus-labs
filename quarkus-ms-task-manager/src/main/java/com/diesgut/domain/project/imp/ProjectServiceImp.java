@@ -41,7 +41,7 @@ public class ProjectServiceImp implements ProjectService {
                 .chain(user -> ProjectEntity.<ProjectEntity>findById(id)
                         .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "Project"))
                         .onItem().invoke(project -> {
-                            if (!user.equals(project.getUserEntity())) {
+                            if (!user.equals(project.userEntity)) {
                                 throw new UnauthorizedException("You are not allowed to update this project");
                             }
                         }));
@@ -62,11 +62,9 @@ public class ProjectServiceImp implements ProjectService {
         return userService.getCurrentUser()
                 .chain(user -> {
                     ProjectEntity projectEntity = createProjectEntityMapper.toEntity(project);
-                    projectEntity.setUserEntity(user);
-                    return projectEntity.persistAndFlush();
-                }).onItem().transform(projectEntitySaved -> {
-                    return projectEntityMapper.toDto((ProjectEntity) projectEntitySaved);
-                });
+                    projectEntity.userEntity = user;
+                    return projectEntity.<ProjectEntity>persistAndFlush();
+                }).onItem().transform(projectEntityMapper::toDto);
     }
 
     @WithTransaction
@@ -75,12 +73,10 @@ public class ProjectServiceImp implements ProjectService {
                 // 1. Usa .chain() porque la operación interna devuelve un Uni
                 .chain(projectEntity -> {
                     updateProjectEntityMapper.updateEntityFromDto(project, projectEntity);
-                    return projectEntity.persistAndFlush();
+                    return projectEntity.<ProjectEntity>persistAndFlush();
                 })
                 // 2. Usa .transform() para la conversión final a DTO
-                .onItem().transform(projectEntityUpdated -> {
-                    return projectEntityMapper.toDto((ProjectEntity) projectEntityUpdated);
-                });
+                .onItem().transform(projectEntityMapper::toDto);
     }
 
     @WithTransaction

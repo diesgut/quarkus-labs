@@ -1,5 +1,6 @@
 package com.diesgut.common;
 
+import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
@@ -10,26 +11,23 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-@Setter
-@Getter
-@MappedSuperclass
-public abstract class PanacheBaseEntity extends PanacheEntityBase {
+public abstract class PanacheBaseEntity extends PanacheEntity {
 
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue
-    private Long id;
+    public Long id;
 
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
-    private ZonedDateTime created_at;
+    public ZonedDateTime created_at;
 
     //@UpdateTimestamp
-    private ZonedDateTime updated_at;
+    public ZonedDateTime updated_at;
 
 
     @Version
-    private int version;
+    public int version;
 
     public PanacheBaseEntity() {
     }
