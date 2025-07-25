@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 @Setter
@@ -35,7 +36,7 @@ public abstract class PanacheBaseEntity extends PanacheEntityBase {
 
     @PreUpdate
     public void preUpdate() {
-        this.updated_at = ZonedDateTime.now();
+        this.updated_at = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     public String toString() {

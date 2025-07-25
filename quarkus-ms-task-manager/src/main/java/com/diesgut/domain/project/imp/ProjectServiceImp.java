@@ -1,9 +1,16 @@
 package com.diesgut.domain.project.imp;
 
 import com.diesgut.domain.project.ProjectEntity;
+import com.diesgut.domain.project.ProjectEntityMapper;
 import com.diesgut.domain.project.ProjectService;
+import com.diesgut.domain.project.dto.CreateProjectDto;
+import com.diesgut.domain.project.dto.ProjectDto;
+import com.diesgut.domain.project.dto.UpdateProjectDto;
+import com.diesgut.domain.project.mapper.CreateProjectEntityMapper;
+import com.diesgut.domain.project.mapper.UpdateProjectEntityMapper;
 import com.diesgut.domain.task.TaskEntity;
 import com.diesgut.domain.user.UserService;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.quarkus.security.UnauthorizedException;
 import io.smallrye.mutiny.Uni;
@@ -15,11 +22,21 @@ import org.hibernate.ObjectNotFoundException;
 import java.util.List;
 
 @RequiredArgsConstructor(onConstructor_ = @Inject)
+@WithSession
 @ApplicationScoped
 public class ProjectServiceImp implements ProjectService {
     private final UserService userService;
+    private final ProjectEntityMapper projectEntityMapper;
+    private final CreateProjectEntityMapper createProjectEntityMapper;
+    private final UpdateProjectEntityMapper updateProjectEntityMapper;
 
-    public Uni<ProjectEntity> findById(Long id) {
+    public Uni<ProjectDto> findById(Long id) {
+        return findEntityById(id)
+                .onItem()
+                .transform(projectEntityMapper::toDto);
+    }
+
+    private Uni<ProjectEntity> findEntityById(Long id) {
         return userService.getCurrentUser()
                 .chain(user -> ProjectEntity.<ProjectEntity>findById(id)
                         .onItem().ifNull().failWith(() -> new ObjectNotFoundException(id, "Project"))
@@ -30,31 +47,46 @@ public class ProjectServiceImp implements ProjectService {
                         }));
     }
 
-    public Uni<List<ProjectEntity>> listForUser() {
+    public Uni<List<ProjectDto>> listForUser() {
         return userService.getCurrentUser()
-                .chain(user -> ProjectEntity.find("userEntity", user).list());
+                .chain(user -> ProjectEntity.find("userEntity", user).list())
+                .onItem().transform(entityList ->
+                        entityList.stream()
+                                .map(projectEntity -> projectEntityMapper.toDto((ProjectEntity) projectEntity))
+                                .toList()
+                );
     }
 
     @WithTransaction
-    public Uni<ProjectEntity> create(ProjectEntity project) {
+    public Uni<ProjectDto> create(CreateProjectDto project) {
         return userService.getCurrentUser()
                 .chain(user -> {
-                    project.setUserEntity(user);
-                    return project.persistAndFlush();
+                    ProjectEntity projectEntity = createProjectEntityMapper.toEntity(project);
+                    projectEntity.setUserEntity(user);
+                    return projectEntity.persistAndFlush();
+                }).onItem().transform(projectEntitySaved -> {
+                    return projectEntityMapper.toDto((ProjectEntity) projectEntitySaved);
                 });
     }
 
     @WithTransaction
-    public Uni<ProjectEntity> update(ProjectEntity project) {
-        return findById(project.getId())
-                .chain(p -> ProjectEntity.getSession())
-                .chain(s -> s.merge(project));
+    public Uni<ProjectDto> update(UpdateProjectDto project) {
+        return findEntityById(project.getId())
+                // 1. Usa .chain() porque la operación interna devuelve un Uni
+                .chain(projectEntity -> {
+                    updateProjectEntityMapper.updateEntityFromDto(project, projectEntity);
+                    return projectEntity.persistAndFlush();
+                })
+                // 2. Usa .transform() para la conversión final a DTO
+                .onItem().transform(projectEntityUpdated -> {
+                    return projectEntityMapper.toDto((ProjectEntity) projectEntityUpdated);
+                });
     }
 
     @WithTransaction
     public Uni<Void> delete(Long id) {
-        return findById(id)
-                .chain(p -> TaskEntity.update("projectEntity = null where projectEntity = ?1", p)
-                        .chain(i -> p.delete()));
+        return findEntityById(id)
+                .chain(projectEntity -> TaskEntity.update("projectEntity = null where projectEntity = ?1", projectEntity)
+                        .chain(i -> projectEntity.delete()));
     }
 }

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "ms-task-manager-bruno",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

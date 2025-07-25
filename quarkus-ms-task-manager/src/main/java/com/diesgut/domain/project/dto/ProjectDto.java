@@ -1,4 +1,4 @@
-package com.diesgut.domain.project;
+package com.diesgut.domain.project.dto;
 
 import lombok.Data;
 

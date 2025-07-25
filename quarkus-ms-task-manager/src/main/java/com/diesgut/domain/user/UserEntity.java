@@ -17,7 +17,7 @@ import java.util.List;
 @Table(
         name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"name", "person_id"})
+                @UniqueConstraint(columnNames = {"name"})
         }
 )
 public class UserEntity extends PanacheBaseEntity {

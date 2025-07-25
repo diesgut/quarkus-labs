@@ -1,0 +1,33 @@
+# Usa una versión reciente y estable de la especificación de Docker Compose
+version: '3.8'
+
+# Define los servicios (contenedores) que compondrán tu aplicación
+services:
+  # Nombre del servicio de la base de datos
+  postgres-db-service:
+    # Usa la imagen oficial de PostgreSQL. Es buena práctica fijar una versión.
+    image: postgres:15
+    
+    # Nombre del contenedor para fácil identificación
+    container_name: postgres-db-container
+    
+    # Variables de entorno para configurar PostgreSQL al iniciar
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=task_manager
+      
+    # Mapea el puerto 5432 del contenedor al puerto 5432 de tu máquina (host)
+    # Formato: <host>:<container>
+    ports:
+      - "5432:5432"
+
+   # volumes:
+   #   - postgres_data:/var/lib/postgresql/data
+      
+    # Política de reinicio: siempre reinicia el contenedor si se detiene,
+    # a menos que lo detengas tú explícitamente.
+    restart: "no"
+
+#volumes:
+#  postgres_data:

@@ -1,5 +1,6 @@
 package com.diesgut.domain.project;
 
+import com.diesgut.domain.project.dto.ProjectDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
