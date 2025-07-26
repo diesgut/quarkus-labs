@@ -4,9 +4,7 @@ import com.diesgut.common.PanacheBaseEntity;
 import com.diesgut.domain.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
 @NoArgsConstructor

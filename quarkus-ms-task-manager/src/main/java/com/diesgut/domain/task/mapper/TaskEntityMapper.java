@@ -1,5 +1,7 @@
-package com.diesgut.domain.task;
+package com.diesgut.domain.task.mapper;
 
+import com.diesgut.domain.task.TaskEntity;
+import com.diesgut.domain.task.dto.TaskDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;

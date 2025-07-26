@@ -49,10 +49,10 @@ public class ProjectServiceImp implements ProjectService {
 
     public Uni<List<ProjectDto>> listForUser() {
         return userService.getCurrentUser()
-                .chain(user -> ProjectEntity.find("userEntity", user).list())
+                .chain(user -> ProjectEntity.<ProjectEntity>find("userEntity", user).list())
                 .onItem().transform(entityList ->
                         entityList.stream()
-                                .map(projectEntity -> projectEntityMapper.toDto((ProjectEntity) projectEntity))
+                                .map(projectEntityMapper::toDto)
                                 .toList()
                 );
     }

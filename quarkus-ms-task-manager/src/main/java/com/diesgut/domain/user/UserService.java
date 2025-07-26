@@ -16,4 +16,5 @@ public interface UserService {
     Uni<Void> delete(Long id);
     Uni<UserEntity> getCurrentUser();
     Uni<UserDto> getCurrentUserDto();
+    Uni<UserDto> changePassword(String currentPassword, String newPassword);
 }

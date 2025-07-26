@@ -2,7 +2,108 @@
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+If you want to learn more about Quarkus, please visit its website: https://quarkus.io/.
+
+Key Features and Design Principles
+This project has been designed following a series of architectural principles and patterns to ensure its maintainability, scalability, and robustness:
+
+* Active Record Pattern: For data persistence, the Active Record pattern has been adopted. This facilitates direct interaction with the database from the domain entities, optimizing rapid development and code readability for CRUD operations.
+* Test-Driven Development (TDD): The project follows a TDD methodology, with a strong focus on integral (integration) tests that ensure the correct functionality of features and facilitate confident refactoring.
+* Domain-Driven Design (DDD): The project's architecture is strongly influenced by DDD principles, focusing on a domain model that clearly and explicitly reflects the business.
+
+## Project Structure
+The project is organized in a modular manner, following a clear structure that separates concerns and facilitates navigation and maintenance.
+```
+quarkus-ms-task-manager/
+├── src/
+│   ├── main/
+│   │   ├── docker/                     # Docker files for containerization.
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── diesgut/
+│   │   │           ├── common/         # Common classes and utilities (e.g., ApiConstants, PanacheBaseEntity, RestExceptionHandler).
+│   │   │           ├── domain/         # Domain Layer (Business Core).
+│   │   │           │   ├── auth/
+│   │   │           │   │   ├── imp/
+│   │   │           │   │   │   └── AuthServiceImpl.java    # Authentication service implementation.
+│   │   │           │   │   ├── AuthDto.java                # DTOs for authentication.
+│   │   │           │   │   ├── AuthResource.java           # REST endpoint for authentication.
+│   │   │           │   │   └── AuthService.java            # Authentication service interface.
+│   │   │           │   ├── person/
+│   │   │           │   │   ├── dto/                        # Person-specific DTOs.
+│   │   │           │   │   │   ├── CreatePersonDto.java
+│   │   │           │   │   │   ├── PersonDto.java
+│   │   │           │   │   │   └── UpdatePersonDto.java
+│   │   │           │   │   ├── imp/
+│   │   │           │   │   │   ├── PersonServiceImpl.java  # Person service implementation.
+│   │   │           │   │   │   └── PersonConstants.java    # Constants related to Person.
+│   │   │           │   │   ├── PersonEntity.java           # Person Entity (Active Record).
+│   │   │           │   │   └── PersonService.java          # Person service interface.
+│   │   │           │   ├── project/
+│   │   │           │   │   ├── dto/                        # Project-specific DTOs.
+│   │   │           │   │   │   ├── CreateProjectDto.java
+│   │   │           │   │   │   ├── ProjectDto.java
+│   │   │           │   │   │   └── UpdateProjectDto.java
+│   │   │           │   │   ├── imp/
+│   │   │           │   │   │   └── ProjectServiceImpl.java # Project service implementation.
+│   │   │           │   │   ├── mapper/                     # Mappers for DTO and Entity conversion.
+│   │   │           │   │   │   ├── CreateProjectEntityMapper.java
+│   │   │           │   │   │   ├── ProjectEntityMapper.java
+│   │   │           │   │   │   └── UpdateProjectEntityMapper.java
+│   │   │           │   │   ├── ProjectEntity.java          # Project Entity (Active Record).
+│   │   │           │   │   ├── ProjectResource.java        # REST endpoint for Projects.
+│   │   │           │   │   └── ProjectService.java         # Project service interface.
+│   │   │           │   ├── task/
+│   │   │           │   │   ├── dto/                        # Task-specific DTOs.
+│   │   │           │   │   │   ├── CreateTaskDto.java
+│   │   │           │   │   │   ├── TaskDto.java
+│   │   │           │   │   │   └── UpdateTaskDto.java
+│   │   │           │   │   ├── imp/
+│   │   │           │   │   │   └── TaskServiceImpl.java    # Task service implementation.
+│   │   │           │   │   ├── mapper/                     # Mappers for DTO and Entity conversion.
+│   │   │           │   │   │   ├── CreateTaskEntityMapper.java
+│   │   │           │   │   │   ├── TaskEntityMapper.java
+│   │   │           │   │   │   └── UpdateTaskEntityMapper.java
+│   │   │           │   │   ├── TaskEntity.java             # Task Entity (Active Record).
+│   │   │           │   │   ├── TaskResource.java           # REST endpoint for Tasks.
+│   │   │           │   │   └── TaskService.java            # Task service interface.
+│   │   │           │   └── user/
+│   │   │           │       ├── dto/                        # User-specific DTOs.
+│   │   │           │       │   ├── CreateUserDto.java
+│   │   │           │       │   ├── PasswordChangeDto.java
+│   │   │           │       │   ├── UpdateUserDto.java
+│   │   │           │       │   └── UserDto.java
+│   │   │           │       ├── imp/
+│   │   │           │       │   └── UserServiceImpl.java    # User service implementation.
+│   │   │           │       ├── mapper/                     # Mappers for DTO and Entity conversion.
+│   │   │           │       │   ├── CreateUserEntityMapper.java
+│   │   │           │       │   ├── UserEntityMapper.java
+│   │   │           │       │   └── UpdateUserEntityMapper.java
+│   │   │           │       ├── UserEntity.java             # User Entity (Active Record).
+│   │   │           │       ├── UserResource.java           # REST endpoint for Users.
+│   │   │           │       └── UserService.java            # User service interface.
+│   │   └── resources/
+│   │       ├── application.properties    # Quarkus configuration file.
+│   │       ├── import-dev.sql            # Database initialization script for development.
+│   │       └── jwt/                      # JWT keys for authentication.
+│   │           ├── private-key.pem
+│   │           ├── public-key.pem
+│   │           └── rsa-private-key.pem
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── diesgut/
+│                   └── domain/
+│                       ├── auth/
+│                       │   └── AuthResourceTest.java     # Integration tests for the authentication resource.
+│                       └── user/
+│                           └── UserResourceTest.java     # Integration tests for the user resource.
+├── .dockerignore
+├── .mvn/
+├── docker-compose.yml                  # Docker Compose configuration.
+├── pom.xml                             # Maven configuration file.
+├── README.md                           # This file.
+```
 
 ## Running the application in dev mode
 
@@ -10,7 +111,7 @@ You can run your application in dev mode that enables live coding using:
 
 ```shell script
 ./mvnw quarkus:dev
-```
+```![img.png](img.png)
 
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
 
@@ -64,3 +165,5 @@ If you want to learn more about building native executables, please consult <htt
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+

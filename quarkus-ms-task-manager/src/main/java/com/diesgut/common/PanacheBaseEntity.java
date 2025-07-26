@@ -11,7 +11,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-public abstract class PanacheBaseEntity extends PanacheEntity {
+@MappedSuperclass
+public abstract class PanacheBaseEntity extends PanacheEntityBase {
 
     @EqualsAndHashCode.Include
     @Id

@@ -4,7 +4,6 @@ import com.diesgut.common.ApiConstants;
 import com.diesgut.domain.project.dto.CreateProjectDto;
 import com.diesgut.domain.project.dto.ProjectDto;
 import com.diesgut.domain.project.dto.UpdateProjectDto;
-import com.diesgut.domain.user.dto.UserDto;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -20,13 +19,13 @@ public class ProjectResource {
     private final ProjectService service;
 
     @GET
-    public Uni<List<ProjectDto>> get() {
+    public Uni<List<ProjectDto>> all() {
         return service.listForUser();
     }
 
     @GET
     @Path("{id}")
-    public Uni<ProjectDto> get(@PathParam("id") long id) {
+    public Uni<ProjectDto> find(@PathParam("id") long id) {
         return service.findById(id);
     }
 
@@ -47,7 +46,7 @@ public class ProjectResource {
 
     @DELETE
     @Path("/{id}")
-    public Uni<Void> delete(@PathParam("id") long id) {
+    public Uni<Void> delete(@PathParam("id") Long id) {
         return service.delete(id);
     }
 }

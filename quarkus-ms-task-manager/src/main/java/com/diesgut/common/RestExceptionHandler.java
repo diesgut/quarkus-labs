@@ -1,24 +1,33 @@
 package com.diesgut.common;
 
 import io.vertx.pgclient.PgException;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.persistence.PersistenceException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.StaleObjectStateException;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.Objects;
 import java.util.Optional;
 
 @Provider
-public class RestExceptionHandler implements ExceptionMapper<HibernateException> {
+public class RestExceptionHandler implements ExceptionMapper<PersistenceException> {
     private static final String PG_UNIQUE_VIOLATION_ERROR = "23505";
 
     @Override
-    public Response toResponse(HibernateException exception) {
+    public Response toResponse(PersistenceException exception) {
         if (hasExceptionInChain(exception, ObjectNotFoundException.class)) {
             return Response.status(Response.Status.NOT_FOUND).entity(exception.getMessage()).build();
+        }
+        if (hasExceptionInChain(exception, OptimisticLockException.class)) {
+            return Response.status(Response.Status.CONFLICT).entity(exception.getMessage()).build();
+        }
+        if (hasExceptionInChain(exception, ConstraintViolationException.class)) {
+            return Response.status(Response.Status.CONFLICT).entity(exception.getMessage()).build();
         }
         if (hasExceptionInChain(exception, StaleObjectStateException.class)
                 || hasPostgresErrorCode(exception, PG_UNIQUE_VIOLATION_ERROR)) {

@@ -9,6 +9,7 @@ import java.util.List;
 public class UserDto {
     private Long id;
     private String name;
+    private int version;
     private List<String> roles;
     private ZonedDateTime createdAt;
     private ZonedDateTime updatedAt;
